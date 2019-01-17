@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="three.js"></script>
+    <script src="CSS3DRenderer.js"></script>
+    <script src="tween.min.js"></script>
+    <style>
+        body{
+            margin: 0px;
+            font-family: sans-serif;
+           
+
+        }
+        #container{
+            width: 100%;
+            height: 100%;
+            background: -webkit-linear-gradient(top, #000000 0%,#4c4c4c 100%); /* Chrome10-25,Safari5.1-6 */
+            position: fixed;
+            left: 0px;
+            top: 0px;
+        }
+        .Pcir{
+            border-radius: 50%;
+            height: 100px;
+            width: 100px;
+            box-shadow: 0px 0px 10px black;
+        }
+        #SJOz{
+            background-image: url(perfil.png);
+            background-size: 475px;
+            background-position: -10px  100px;
+        }
+        
+        #SJOz2{
+            background-image: url(perfil.png);
+            background-size: 475px;
+            background-position: -10px  0px;
+        }
+       #SJOz3{
+            background-image: url(perfil.png);
+            background-size: 475px;
+            background-position: -250px  0px;
+        }
+        
+       #SJOz4{
+            background-image: url(perfil.png);
+            background-size: 475px;
+            background-position: -250px  0px;
+        }
+        
+        
+
+        #botons{
+            
+            position: relative;
+            margin:  0 auto;
+            width: 300px;
+            height: 50px;
+            top: 30px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.36);
+            z-index: 10;
+            border:1px solid #575757;
+            display: flex;
+            overflow: hidden;
+            
+        }
+        #botons input{
+            flex:  1 0%;
+            color:white;
+            background: rgba(0, 0, 0, 0);
+            border:none;
+            outline: none;
+        }
+        #botons input:hover{
+            background: rgba(79, 70, 181, 0.63);
+            -webkit-transition:all .5s ease;
+        }
+        #creditos{
+            
+            position: fixed;
+            color: white;
+            z-index: 3;
+            padding: 10px;
+            font-size: 30px;
+            -webkit-user-select:none;
+            cursor: default;
+            
+        }
+    </style>
+
+</head>
+<body>
+   <div id="creditos">JeanCode</div>
+   <div id="botons">
+       <input type="submit" value="siguiente" id="siguiente">
+       <input type="submit" value="atras" id="atras">
+   </div>
+   <div id="container">
+       
+       
+   </div>
+        <script>
+            
+        //si de verdad te interesa aprender contactame en doyer_furia@hotmail.com
+    
+        var camera,scene,renderer,group ;
+        var animation = TWEEN.Easing.Elastic.Out;
+            
+        var positions = 0;
+        var punterPs = 0;
+		var Element = function ( id, x, y, z, ry ) {
+
+				var div = document.createElement( 'div' );
+                //se agrega una clase para darle los estilos por css
+                div.className = "Pcir"
+                div.id = id;
+				div.style.backgroundColor = '#000';
+            
+                //se genera un objeto para el render css
+				var object = new THREE.CSS3DObject( div );
+				object.position.set( x, y, z );
+				object.rotation.y = ry;
+				return object;
+
+        };
+        //lanzamos la funciones init and animate
+        init();
+        animate();
+            
+        //se inicializa la configuracion del entorno
+        function init(){
+            
+                    
+            //llamamos a la capa que contendra todo
+            var container = document.getElementById( 'container' );
+            
+            //le damos las caracteristicas a la camara virtual
+            camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 5000 );
+            //se le da un posicion a la camara
+            camera.position.set( 0, 0,450 );
+            //generamos una nueva escena
+            scene = new THREE.Scene();
+            
+            //generamos render en css
+            renderer = new THREE.CSS3DRenderer();
+            //adaptamos al tamaño de la capa
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            //agregamos el contenido a la capa container
+            container.appendChild( renderer.domElement );
+            
+            //generamos un grupo
+            group = new THREE.Group();
+            
+            //agregamos los elementos con id para llamarlas
+            group.add( new Element( 'SJOz', 0, 0, 0, 0 ) );
+            group.add( new Element( 'SJOz2', 120, 0, 0, 0 ) );
+            group.add( new Element( 'SJOz3', 240, 0, 0, 0 ) );
+            group.add( new Element( 'SJOz4', 360, 0, 0, 0 ) );
+            
+
+             //animacion inicial el primer item en pos resaltada
+            new TWEEN.Tween(group.children[0].scale).to( {
+
+            x:2,y:2}, 1500 )
+
+            .easing(animation).start();
+        
+            group.children[0].position.z = 55;
+            
+            
+            //agregamos todo el grupo a la scena
+            scene.add( group );
+            
+            //llamamos al evento resize para que se adapte el render cuando cambiemos el nanvegador
+            window.addEventListener( 'resize', onWindowResize, false );
+            
+            //eventos del boton siguiente
+            document.getElementById("siguiente").addEventListener("click",function(){
+              
+                //la posicion se puede determiinar  120 * el numero de items
+                
+                if(positions > -360){
+                    //positios avanza 120 unidades 
+                     positions =  positions - 120;
+                     punterPs = punterPs - 1;
+                }
+                //animamos la posicion del grupo en general 
+                new TWEEN.Tween(group.position).to( {
+                    x:positions}, 1500 )
+                .easing(animation).start();
+ 
+              //animacion de item actual
+                 new TWEEN.Tween(group.children[Math.abs(punterPs)].scale).to( {
+
+                    x:2,y:2}, 1500 )
+
+                 .easing(animation).start();
+                
+                
+                new TWEEN.Tween(group.children[Math.abs(punterPs)].position).to( {
+
+                    z:50}, 1500 )
+
+                .easing(animation).start();
+                
+                
+                
+                //animacion de item anterior
+                 new TWEEN.Tween(group.children[Math.abs(punterPs)-1].scale).to( {
+
+                    x:1,y:1}, 1500 )
+
+                 .easing(animation).start();
+                
+                console.log();
+                
+                            
+                new TWEEN.Tween(group.children[Math.abs(punterPs)-1].position).to( {
+
+                    z:0}, 1500 )
+
+                .easing(animation).start();
+                
+                
+            });
+            
+            
+            document.getElementById("atras").addEventListener("click",function(){
+              
+                if(positions < 0){
+                
+                    //animacion de item actual
+                    new TWEEN.Tween(group.children[Math.abs(punterPs)].scale).to( {
+
+                    x:1,y:1}, 1500 )
+
+                    .easing(animation).start();
+                    
+                    
+                    new TWEEN.Tween(group.children[Math.abs(punterPs)].position).to( {
+
+                    z:0}, 1500 )
+
+                    .easing(animation).start();
+    
+                    
+                    //modifcar la varible posinters para la posicion del grupo y la animacion inidividual de los items
+                    positions =  positions + 120;
+                    punterPs = punterPs + 1;
+                    
+                    //animacion de items aterirores
+                    new TWEEN.Tween(group.position).to( {
+
+                    x:positions}, 1500 )
+
+                    .easing(animation).start();
+                    
+                    new TWEEN.Tween(group.children[Math.abs(punterPs)].scale).to( {
+
+                    x:2,y:2}, 1500 )
+
+                    .easing(animation).start();
+                    new TWEEN.Tween(group.children[Math.abs(punterPs)].position).to( {
+
+                    z:50}, 1500 )
+
+                    .easing(animation).start();
+    
+              
+                }
+                 console.log(Math.abs(punterPs));
+                 
+                
+  
+
+            });
+    
+
+        }
+        //funcion de auto resize acomoda el contenido
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+        }
+        // funcion de animaciones asincronas
+        function animate() {
+            TWEEN.update();
+            requestAnimationFrame( animate );
+            renderer.render( scene, camera );
+
+        }
+
+
+    </script>
+</body>
+</html>
