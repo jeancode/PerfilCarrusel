@@ -1,3 +1,3 @@
 # PerfilCarrusel
 
-![PerfilCarrusel.PNG](cmd2.PNG)
+![PerfilCarrusel.PNG](PerfilCarrusel.PNG)
